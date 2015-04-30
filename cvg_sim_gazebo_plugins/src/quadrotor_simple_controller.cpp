@@ -254,6 +254,7 @@ void GazeboQuadrotorSimpleController::VelocityCallback(const geometry_msgs::Twis
   velocity_command_.linear.z += drift_noise[2] + 2*motion_small_noise_*(drand48()-0.5);
   velocity_command_.angular.z += drift_noise[3] + 2*motion_small_noise_*(drand48()-0.5);
 //  velocity_command_.angular.z *= 2;
+  ROS_FATAL("x: %f y: %f z: %f ang: %f", velocity_command_.linear.x, velocity_command_.linear.y, velocity_command_.linear.z, velocity_command_.angular.z);
 
 }
 
