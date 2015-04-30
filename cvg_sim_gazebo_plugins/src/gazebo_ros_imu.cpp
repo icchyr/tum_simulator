@@ -129,6 +129,7 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     topicName = "imu";
   else
     topicName = _sdf->GetElement("topicName")->Get<std::string>();
+    topicName = _model->GetName();
 
   if (!_sdf->HasElement("serviceName"))
     serviceName = topicName + "/calibrate";

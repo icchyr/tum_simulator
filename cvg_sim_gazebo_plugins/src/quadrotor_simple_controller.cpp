@@ -47,6 +47,8 @@
 #include <cmath>
 #include <stdlib.h>
 
+#define MY_ROS_FATAL ROS_FATAL
+
 namespace gazebo {
 
 GazeboQuadrotorSimpleController::GazeboQuadrotorSimpleController()
@@ -70,31 +72,43 @@ void GazeboQuadrotorSimpleController::Load(physics::ModelPtr _model, sdf::Elemen
 {
   world = _model->GetWorld();
 
+  std::string drone_name = _model->GetName();
+
   // load parameters
   if (!_sdf->HasElement("robotNamespace"))
     namespace_.clear();
   else
-    namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
+    namespace_ = _sdf->GetElement("robotNamespace")->Get<std::string>();
+
+  MY_ROS_FATAL("namespace: %s", namespace_.c_str());
 
   if (!_sdf->HasElement("topicName"))
-    velocity_topic_ = "cmd_vel";
+    velocity_topic_ = "/" + drone_name + "cmd_vel";
   else
-    velocity_topic_ = _sdf->GetElement("topicName")->Get<std::string>();
+	  velocity_topic_ = namespace_ + _sdf->GetElement("topicName")->Get<std::string>();
+
+  MY_ROS_FATAL("velocity topic: %s", velocity_topic_.c_str());
 
   if (!_sdf->HasElement("navdataTopic"))
-    navdata_topic_ = "/ardrone/navdata";
+    navdata_topic_ = "/" + drone_name + "/navdata";
   else
     navdata_topic_ = _sdf->GetElement("navdataTopic")->Get<std::string>();
+
+  MY_ROS_FATAL("navdata topic: %s", navdata_topic_.c_str());
 
   if (!_sdf->HasElement("imuTopic"))
     imu_topic_.clear();
   else
-    imu_topic_ = _sdf->GetElement("imuTopic")->Get<std::string>();
+    imu_topic_ = namespace_ + _sdf->GetElement("imuTopic")->Get<std::string>();
+
+  MY_ROS_FATAL("imu topic: %s", imu_topic_.c_str());
 
   if (!_sdf->HasElement("stateTopic"))
     state_topic_.clear();
   else
-    state_topic_ = _sdf->GetElement("stateTopic")->Get<std::string>();
+    state_topic_ = namespace_ + _sdf->GetElement("stateTopic")->Get<std::string>();
+
+  MY_ROS_FATAL("state topic: %s", state_topic_.c_str());
 
   if (!_sdf->HasElement("bodyName"))
   {
@@ -103,8 +117,11 @@ void GazeboQuadrotorSimpleController::Load(physics::ModelPtr _model, sdf::Elemen
   }
   else {
     link_name_ = _sdf->GetElement("bodyName")->Get<std::string>();
-    link = boost::dynamic_pointer_cast<physics::Link>(world->GetEntity(link_name_));
+    // link = boost::dynamic_pointer_cast<physics::Link>(world->GetEntity(link_name_));
+    link = _model->GetLink();
   }
+
+  MY_ROS_FATAL("link name: %s", link_name_.c_str());
 
   if (!link)
   {
