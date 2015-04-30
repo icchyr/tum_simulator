@@ -107,6 +107,7 @@ void GazeboRosIMU::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   else {
     linkName = _sdf->GetElement("bodyName")->Get<std::string>();
     link = boost::dynamic_pointer_cast<physics::Link>(world->GetEntity(linkName));
+    link = _model->GetLink();
   }
 
   // assert that the body by linkName exists
