@@ -83,7 +83,7 @@ void GazeboQuadrotorSimpleController::Load(physics::ModelPtr _model, sdf::Elemen
   MY_ROS_FATAL("namespace: %s", namespace_.c_str());
 
   if (!_sdf->HasElement("topicName"))
-    velocity_topic_ = "/" + drone_name + "cmd_vel";
+    velocity_topic_ = "/" + drone_name + "/cmd_vel";
   else
 	  velocity_topic_ = namespace_ + _sdf->GetElement("topicName")->Get<std::string>();
 
